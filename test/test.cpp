@@ -31,7 +31,7 @@ CTEST(fileChoice_test, test_option_0)
     fflush(stdin);
 
     // Capture the output
-    std::string output;
+    string output;
     FILE* pipe = popen("./bin/program", "r");
     if (pipe)
     {
@@ -62,7 +62,7 @@ CTEST(fileChoice_test, test_option_3)
     fflush(stdin);
 
     // Capture the output
-    std::string output;
+    string output;
     FILE* pipe = popen("./bin/program", "r");
     if (pipe)
     {
@@ -86,7 +86,7 @@ CTEST(fileChoice_test, test_option_3)
 CTEST(fileCheck_test, test_valid_file)
 {
     // Create a temporary file
-    std::ofstream file("temp.txt");
+    ofstream file("temp.txt");
     file << "Hello, world!";
     file.close();
 
@@ -97,7 +97,7 @@ CTEST(fileCheck_test, test_valid_file)
     ASSERT_TRUE(result);
 
     // Clean up the temporary file
-    std::remove("temp.txt");
+    remove("temp.txt");
 }
 
 
@@ -112,16 +112,16 @@ CTEST(fileBrowser_test, test_invalid_index)
     fflush(stdin);
 
     // Capture the output
-    std::ostringstream outputStream;
-    std::streambuf* oldCoutBuffer = std::cout.rdbuf(outputStream.rdbuf());
+    ostringstream outputStream;
+    streambuf* oldCoutBuffer = cout.rdbuf(outputStream.rdbuf());
 
     // Run the function
-    std::string result = fileBrowser();
+    string result = fileBrowser();
 
     // Restore the input stream
     fclose(stdin);
     freopen("/dev/tty", "r", stdin);
-    std::cout.rdbuf(oldCoutBuffer);
+    cout.rdbuf(oldCoutBuffer);
 
     // Assertions
     ASSERT_STR(outputStream.str().c_str(), "Неверный индекс файла!\n");
@@ -139,14 +139,14 @@ CTEST(fileCheck_test, test_invalid_file)
 CTEST(highlightWords_test, test_highlight_words)
 {
     // Input strings
-    std::string str1 = "The quick brown fox jumps over the lazy dog.";
-    std::string str2 = "quick fox dog";
+    string str1 = "The quick brown fox jumps over the lazy dog.";
+    string str2 = "quick fox dog";
 
     // Expected result
-    std::string expected = "\033[32mThe\033[0m \033[32mquick\033[0m \033[31mbrown\033[0m \033[32mfox\033[0m \033[31mjumps\033[0m \033[31mover\033[0m \033[31mthe\033[0m \033[32mlazy\033[0m \033[32mdog.\033[0m\n";
+    string expected = "\033[32mThe\033[0m \033[32mquick\033[0m \033[31mbrown\033[0m \033[32mfox\033[0m \033[31mjumps\033[0m \033[31mover\033[0m \033[31mthe\033[0m \033[32mlazy\033[0m \033[32mdog.\033[0m\n";
 
     // Call the function
-    std::string result = highlightWords(str1, str2);
+    string result = highlightWords(str1, str2);
 
     // Assertion
     ASSERT_STR(expected.c_str(), result.c_str());
@@ -155,13 +155,13 @@ CTEST(highlightWords_test, test_highlight_words)
 CTEST(getHighlightedText_test, test_get_highlighted_text)
 {
     // Input text with color codes
-    std::string text = "\033[32mThe\033[0m \033[31mquick\033[0m brown \033[32mfox\033[0m jumps over the \033[31mlazy\033[0m dog.";
+    string text = "\033[32mThe\033[0m \033[31mquick\033[0m brown \033[32mfox\033[0m jumps over the \033[31mlazy\033[0m dog.";
 
     // Expected result
-    std::string expected = "The quick brown fox jumps over the lazy dog.";
+    string expected = "The quick brown fox jumps over the lazy dog.";
 
     // Call the function
-    std::string result = getHighlightedText(text);
+    string result = getHighlightedText(text);
 
     // Assertion
     ASSERT_STR(expected.c_str(), result.c_str());
@@ -170,7 +170,7 @@ CTEST(getHighlightedText_test, test_get_highlighted_text)
 CTEST(run_test, test_run_function)
 {
     // Test input file path
-    std::string filePath = "test.txt";
+    string filePath = "test.txt";
 
     // Call the function
     char result = run(filePath);

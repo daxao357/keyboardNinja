@@ -7,7 +7,7 @@ int main()
 {
     setlocale(LC_ALL, "Russian");
     while (true) {
-        std::string path = "./src/txt/" + fileChoice();
+        string path = "./src/txt/" + fileChoice();
         char choice = run(path);
         system("clear");
 

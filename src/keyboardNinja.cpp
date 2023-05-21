@@ -8,7 +8,7 @@
 #include <chrono>
 #include <cmath>
 #include "keyboardNinja.h"
-#include <limits> // Для использования std::numeric_limits
+#include <limits> // Для использования numeric_limits
 
 using namespace std;
 namespace fs = filesystem;
@@ -33,72 +33,78 @@ string fileBrowser() {
 
     string folderPath = "./src/txt";
 
-    int fileCount = 0; // Переменная для подсчета количества файлов
-
+    int fileCount = 0;
     for (const auto& entry : fs::directory_iterator(folderPath)) {
         if (entry.is_regular_file()) {
             ++fileCount;
         }
     }
 
-    std::cout << "\n\tAmount of files: " << fileCount << std::endl;
+    cout << "\n\tAmount of files: " << fileCount << endl;
 
-    int fileNumber = 0; // Переменная для нумерации файлов
+    int fileNumber = 0;
     vector<string> fileNames;
     for (const auto& entry : fs::directory_iterator(folderPath)) {
         if (entry.is_regular_file()) {
-            std::cout << "File " << fileNumber << ": " << entry.path().filename().string() << std::endl;
+            cout << "File " << fileNumber << ": " << entry.path().filename().string() << endl;
             fileNames.push_back(entry.path().filename().string());
             ++fileNumber;
         }
     }
-    cout << endl << "What file do you choose?" << endl;
-    size_t selectedFileIndex;
-    cin >> selectedFileIndex;
-    if (selectedFileIndex < fileNames.size()) {
-        return fileNames[selectedFileIndex];
+
+    cout << "\nWhat file do you choose?" << endl;
+
+    int selectedFileIndex;
+
+    while (true) {
+        if (cin >> selectedFileIndex && selectedFileIndex >= 0 && selectedFileIndex < static_cast<int>(fileNames.size())) {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Очистка символа новой строки
+            return fileNames[selectedFileIndex];
+        } else {
+            cout << "Invalid input or file index. Please enter a valid file index: ";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Очистка оставшихся символов во входном потоке
+        }
     }
-    else {
-        cout << "Неверный индекс файла!" << std::endl;
-    }
-    return " ";
 }
 
+string fileChoice() {
+    cout << "\n\tWelcome to the keyboardNinja!\nWrite a digit to select one of the default texts,\nor browse your files!\n\n";
+    cout << "0. The quick fox" << endl;
+    cout << "1. Silent stars" << endl;
+    cout << "2. A journey" << endl;
+    cout << "3. Choose your own!" << endl;
 
-std::string fileChoice() {
-    std::cout << "\n\tWelcome to the keyboardNinja!\nWrite a digit to select one of the default texts,\nor browse your files!\n\n";
-    std::cout << "0. The quick fox" << std::endl;
-    std::cout << "1. Silent stars" << std::endl;
-    std::cout << "2. A journey" << std::endl;
-    std::cout << "3. Choose your own!" << std::endl;
     int number;
-    std::cout << "\nYour choice: ";
+    cout << "\nYour choice: ";
 
     // Проверка, что введено корректное число
-    while (!(std::cin >> number)) {
-        std::cout << "Invalid input. Please enter a valid number: ";
-        std::cin.clear(); // Очистка ошибки ввода
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Пропуск некорректного ввода
-    }
+    do {
+        if (!(cin >> number)) {
+            cout << "Invalid input. Please enter a valid number: ";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        } else if (number < 0 || number > 3) {
+            cout << "Invalid choice. Please enter a number from 0 to 3: ";
+        }
+    } while (number < 0 || number > 3);
 
-    std::string path;
+    string path;
     switch (number) {
-    case 0:
-        path = "The quick fox.txt";
-        break;
-    case 1:
-        path = "Silent stars.txt";
-        break;
-    case 2:
-        path = "A journey.txt";
-        break;
-    case 3:
-        return fileBrowser();
+        case 0:
+            path = "The quick fox.txt";
+            break;
+        case 1:
+            path = "Silent stars.txt";
+            break;
+        case 2:
+            path = "A journey.txt";
+            break;
+        case 3:
+            return fileBrowser();
     }
 
-    // Очистка буфера ввода, если были введены лишние символы
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     return path;
 }
 
@@ -267,10 +273,10 @@ char run(string path) {
             cout << "Percent of correct elements: 100%! Grats!" << endl;
         }
         else {
-            cout << "Percent of correct elements: " << fixed << std::setprecision(2) << static_cast<double>(c) / (c + n) * 100.0 << "%" << endl;
+            cout << "Percent of correct elements: " << fixed << setprecision(2) << static_cast<double>(c) / (c + n) * 100.0 << "%" << endl;
         }
         double roundedSeconds = round(seconds * 100) / 100;
-        cout << "Time: " << fixed << std::setprecision(2) << roundedSeconds << " seconds" << endl;
+        cout << "Time: " << fixed << setprecision(2) << roundedSeconds << " seconds" << endl;
         double typingSpeed = (static_cast<double>(numberOfCharacters) / roundedSeconds) * 60;
         cout << "Typing Speed: " << fixed << setprecision(2) << typingSpeed << " characters per minute" << endl;
         cout << "\nPress 'q' to exit or any other key to continue: ";
