@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
 bool fileCheck(string path);
 string fileBrowser();
 string fileChoice();
