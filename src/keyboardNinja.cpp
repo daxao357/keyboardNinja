@@ -179,11 +179,6 @@ string highlightWords(const string& str1, const string& str2) {
 
     string result;
 
-    //result += "String 1: " + str1 + "\n";
-    //result += "String 2: " + str2 + "\n";
-
-    //result += "Highlighted words and punctuation:\n";
-
     for (size_t i = 0; i < words1.size(); ++i) {
         const string& word1 = words1[i];
         bool found = false;
@@ -196,14 +191,13 @@ string highlightWords(const string& str1, const string& str2) {
 
         if (found) {
             result += "\033[32m" + word1 + "\033[0m";
-            if (word1 != " ") {
+            if (!word1.empty() && word1 != " " && word1 != "\n") {
                 c++;
             }
-
         }
         else {
             result += "\033[31m" + word1 + "\033[0m";
-            if (word1 != " ") {
+            if (!word1.empty() && word1 != " " && word1 != "\n") {
                 n++;
             }
         }
@@ -213,7 +207,15 @@ string highlightWords(const string& str1, const string& str2) {
     return result;
 }
 
-#include <chrono>
+string trim(const string& str) {
+    size_t first = str.find_first_not_of(' ');
+    size_t last = str.find_last_not_of(' ');
+    if (first == string::npos || last == string::npos) {
+        return "";
+    }
+    return str.substr(first, last - first + 1);
+}
+
 char run(string path) {
     c = 0; n = 0;
     double numberOfCharacters = 0;
@@ -227,21 +229,25 @@ char run(string path) {
         vector<string> hlines, finalResults, text;
         chrono::steady_clock::time_point startTime, endTime;
         startTime = chrono::steady_clock::now();
-        while (!(fin.eof())) {
+        
+        size_t lineCount = 0;  // Переменная для подсчета строк в файле
+
+        while (getline(fin, line)) {
             system("clear");
 
-            getline(fin, line);
             cout << line << endl;
 
             getline(cin >> ws, urline);
-
             urline = removeExtraSpaces(urline);
+            urline = trim(urline);
             text.push_back(urline);
             string result = highlightWords(line, urline);
             string finalResult = getHighlightedText(result);
             finalResults.push_back(finalResult);
             numberOfCharacters += urline.size();
+            lineCount++;  // Увеличиваем счетчик строк
         }
+        
         endTime = chrono::steady_clock::now();
         system("clear");
 
@@ -261,24 +267,25 @@ char run(string path) {
                 cout << endl;
             }
         }
+        
         chrono::duration<double> elapsedTime = endTime - startTime;
         double seconds = elapsedTime.count();
-
+		n = n -  lineCount + 1;
         cout << "Correct: " << c << endl;
         cout << "Incorrect: " << n << endl;
         if (c == 0 && n == 0) {
             cout << "Percent of correct elements: N/A" << endl;
-        }
-        else if (n == 0 && c != 0) {
+        } else if (n == 0 && c != 0) {
             cout << "Percent of correct elements: 100%! Grats!" << endl;
-        }
-        else {
+        } else {
             cout << "Percent of correct elements: " << fixed << setprecision(2) << static_cast<double>(c) / (c + n) * 100.0 << "%" << endl;
         }
+        
         double roundedSeconds = round(seconds * 100) / 100;
         cout << "Time: " << fixed << setprecision(2) << roundedSeconds << " seconds" << endl;
         double typingSpeed = (static_cast<double>(numberOfCharacters) / roundedSeconds) * 60;
         cout << "Typing Speed: " << fixed << setprecision(2) << typingSpeed << " characters per minute" << endl;
+        
         cout << "\nPress 'q' to exit or any other key to continue: ";
         char choice;
         cin >> choice;
