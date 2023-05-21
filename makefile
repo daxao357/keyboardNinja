@@ -3,34 +3,53 @@ CXX = g++
 CXXFLAGS = -std=c++20 -Wall -Wextra
 
 # Директории
-SRC_DIR = src
-OBJ_DIR = obj
-BIN_DIR = bin
+SRCDIR = src
+OBJDIR = obj/main
+BINDIR = bin
+TESTDIR = test
+TESTOBJDIR = obj/test
 
 # Исходные файлы
-SRCS = $(wildcard $(SRC_DIR)/*.cpp)
+SRCS = $(wildcard $(SRCDIR)/*.cpp)
+TESTSRCS = $(wildcard $(TESTDIR)/*.cpp)
 
 # Объектные файлы
-OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
+OBJS = $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRCS))
+TESTOBJS = $(patsubst $(TESTDIR)/%.cpp,$(TESTOBJDIR)/%.o,$(TESTSRCS))
 
-# Исполнительный файл
-BIN = $(BIN_DIR)/keyboardNinja
+# Исполняемые файлы
+EXEC = $(BINDIR)/program
+TESTEXEC = $(BINDIR)/test
 
-# Правило для компиляции объектных файлов
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+# Правило по умолчанию
+all: $(EXEC)
 
-# Правило для сборки исполнительного файла
-$(BIN): $(OBJS)
+# Правило для сборки исполняемого файла
+$(EXEC): $(OBJS)
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
-# Правило "all" для сборки исполнительного файла
-all: $(BIN)
+# Правило для компиляции исходных файлов программы
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Правило "run" для запуска исполнительного файла
-run: $(BIN)
-	$(BIN)
+# Правило для сборки тестового исполняемого файла
+$(TESTEXEC): $(TESTOBJS) $(OBJS)
+	$(CXX) $(CXXFLAGS) $^ -o $@
 
-# Правило "clean" для очистки объектных и исполнительных файлов
+# Правило для компиляции исходных файлов тестов
+$(TESTOBJDIR)/%.o: $(TESTDIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Правило для запуска программы
+run: $(EXEC)
+	$(EXEC)
+
+# Правило для запуска тестов
+test: $(TESTEXEC)
+	$(TESTEXEC)
+
+# Правило для очистки сгенерированных файлов
 clean:
-	rm -f $(OBJS) $(BIN)
+	rm -rf $(OBJDIR)/*.o $(TESTOBJDIR)/*.o $(EXEC) $(TESTEXEC)
+
+.PHONY: all clean run test
