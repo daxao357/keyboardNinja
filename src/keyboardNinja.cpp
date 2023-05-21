@@ -64,7 +64,7 @@ string fileBrowser() {
 }
 
 string fileChoice() {
-    cout << "\n\tWelcome to the keyboardNinja!\nWrite a digit to select one of the default texts,\nor browse your files!\n";
+    cout << "\n\tWelcome to the keyboardNinja!\nWrite a digit to select one of the default texts,\nor browse your files!\n\n";
     cout << "0. The quick fox" << endl;
     cout << "1. Silent stars" << endl;
     cout << "2. A journey" << endl;
