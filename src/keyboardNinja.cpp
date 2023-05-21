@@ -8,6 +8,7 @@
 #include <chrono>
 #include <cmath>
 #include "keyboardNinja.h"
+#include <limits> // Для использования std::numeric_limits
 
 using namespace std;
 namespace fs = filesystem;
@@ -63,16 +64,24 @@ string fileBrowser() {
     return " ";
 }
 
-string fileChoice() {
-    cout << "\n\tWelcome to the keyboardNinja!\nWrite a digit to select one of the default texts,\nor browse your files!\n\n";
-    cout << "0. The quick fox" << endl;
-    cout << "1. Silent stars" << endl;
-    cout << "2. A journey" << endl;
-    cout << "3. Choose your own!" << endl;
+
+std::string fileChoice() {
+    std::cout << "\n\tWelcome to the keyboardNinja!\nWrite a digit to select one of the default texts,\nor browse your files!\n\n";
+    std::cout << "0. The quick fox" << std::endl;
+    std::cout << "1. Silent stars" << std::endl;
+    std::cout << "2. A journey" << std::endl;
+    std::cout << "3. Choose your own!" << std::endl;
     int number;
-    cout << "\nYour choice: ";
-    cin >> number;
-    string path;
+    std::cout << "\nYour choice: ";
+
+    // Проверка, что введено корректное число
+    while (!(std::cin >> number)) {
+        std::cout << "Invalid input. Please enter a valid number: ";
+        std::cin.clear(); // Очистка ошибки ввода
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Пропуск некорректного ввода
+    }
+
+    std::string path;
     switch (number) {
     case 0:
         path = "The quick fox.txt";
@@ -86,6 +95,10 @@ string fileChoice() {
     case 3:
         return fileBrowser();
     }
+
+    // Очистка буфера ввода, если были введены лишние символы
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
     return path;
 }
 
